@@ -37,6 +37,10 @@ df_legendary_fish_detail_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
     .csv(legendary_fish_detail)
 
+df_legendary_fish_price_breakdown_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(legendary_fish_price_breakdown)
+
 df_legendaryfishII_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
     .csv(legendaryfishII)
@@ -65,6 +69,8 @@ try:
     df_fish_price_breakdown_raw.write.mode("overwrite").option("delta.columnMapping.mode", "name").saveAsTable("stardew_project.bronze.fish_price_breakdown")
 
     df_legendary_fish_detail_raw.write.mode("overwrite").option("delta.columnMapping.mode", "name").saveAsTable("stardew_project.bronze.legendary_fish_detail")
+
+    df_legendary_fish_price_breakdown_raw.write.mode("overwrite").option("delta.columnMapping.mode", "name").saveAsTable("stardew_project.bronze.legendary_fish_price_breakdown")
 
     df_legendaryfishII_raw.write.mode("overwrite").option("delta.columnMapping.mode", "name").saveAsTable("stardew_project.bronze.legendaryfishII")
 

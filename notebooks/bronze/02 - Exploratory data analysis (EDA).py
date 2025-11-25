@@ -15,6 +15,8 @@ df_fish_price_breakdown_bronze = spark.read.table("stardew_project.bronze.fish_p
 
 df_legendary_fish_detail_bronze = spark.read.table("stardew_project.bronze.legendary_fish_detail")
 
+df_legendary_fish_price_breakdown_bronze = spark.read.table("stardew_project.bronze.legendary_fish_price_breakdown")
+
 df_legendaryfishII_bronze = spark.read.table("stardew_project.bronze.legendaryfishii")
 
 df_nightmarketfish_bronze = spark.read.table("stardew_project.bronze.nightmarketfish")
@@ -31,7 +33,7 @@ df_behavior_bronze = spark.read.table("stardew_project.bronze.behavior")
 
 # COMMAND ----------
 
-df_crabpotandothercatchables_bronze.display()
+df_crabpotandothercatchables_bronze.limit(5).display()
 
 # COMMAND ----------
 
@@ -44,6 +46,10 @@ df_fish_price_breakdown_bronze.limit(5).display()
 # COMMAND ----------
 
 df_legendary_fish_detail_bronze.limit(5).display()
+
+# COMMAND ----------
+
+df_legendary_fish_price_breakdown_bronze.limit(5).display()
 
 # COMMAND ----------
 
@@ -77,6 +83,8 @@ df_fish_price_breakdown_bronze.printSchema()
 
 df_legendary_fish_detail_bronze.printSchema()
 
+df_legendary_fish_price_breakdown_bronze.printSchema()
+
 df_legendaryfishII_bronze.printSchema()
 
 df_nightmarketfish_bronze.printSchema()
@@ -106,6 +114,10 @@ df_fish_price_breakdown_bronze.describe().show()
 # COMMAND ----------
 
 df_legendary_fish_detail_bronze.describe().show()
+
+# COMMAND ----------
+
+df_legendary_fish_price_breakdown_bronze.describe().show()
 
 # COMMAND ----------
 
@@ -155,6 +167,11 @@ df_legendary_fish_detail_nulls = df_legendary_fish_detail_bronze.agg(*
         for c in df_legendary_fish_detail_bronze.columns]
 )
 
+df_legendary_fish_price_breakdown_nulls = df_legendary_fish_price_breakdown_bronze.agg(*
+    [f.sum(f.when(col(c).isNull(), 1).otherwise(0)).alias(c) 
+        for c in df_legendary_fish_price_breakdown_bronze.columns]
+)
+
 df_legendaryfishII_nulls = df_legendaryfishII_bronze.agg(*
     [f.sum(f.when(col(c).isNull(), 1).otherwise(0)).alias(c) 
         for c in df_legendaryfishII_bronze.columns]
@@ -179,6 +196,7 @@ display(df_crabpotandothercatchables_nulls)
 display(df_fish_detail_bronze_nulls)
 display(df_fish_price_breakdown_nulls)
 display(df_legendary_fish_detail_nulls)
+display(df_legendary_fish_price_breakdown_nulls)
 display(df_legendaryfishII_nulls)
 display(df_nightmarketfish_nulls)
 display(df_villagers_nulls)
@@ -196,6 +214,8 @@ df_fish_price_breakdown_duplicates = df_fish_price_breakdown_bronze.groupBy(*[c 
 
 df_legendary_fish_detail_duplicates = df_legendary_fish_detail_bronze.groupBy(*[c for c in df_legendary_fish_detail_bronze.columns]).count().where("count > 1").withColumnRenamed("count", "Duplicates")
 
+df_legendary_fish_price_breakdown_duplicates = df_legendary_fish_price_breakdown_bronze.groupBy(*[c for c in df_legendary_fish_price_breakdown_bronze.columns]).count().where("count > 1").withColumnRenamed("count", "Duplicates")
+
 df_legendaryfishII_duplicates = df_legendaryfishII_bronze.groupBy(*[c for c in df_legendaryfishII_bronze.columns]).count().where("count > 1").withColumnRenamed("count", "Duplicates")
 
 df_nightmarketfish_duplicates = df_nightmarketfish_bronze.groupBy(*[c for c in df_nightmarketfish_bronze.columns]).count().where("count > 1").withColumnRenamed("count", "Duplicates")
@@ -208,6 +228,7 @@ display(df_crabpotandothercatchables_duplicates)
 display(df_fish_detail_duplicates)
 display(df_fish_price_breakdown_duplicates)
 display(df_legendary_fish_detail_duplicates)
+display(df_legendary_fish_price_breakdown_nulls)
 display(df_legendaryfishII_duplicates)
 display(df_nightmarketfish_duplicates)
 display(df_villagers_duplicates)
