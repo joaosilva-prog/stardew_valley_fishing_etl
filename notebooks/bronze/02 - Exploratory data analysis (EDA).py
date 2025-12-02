@@ -5,6 +5,7 @@
 
 # COMMAND ----------
 
+# DBTITLE 1,Imports
 # Importando nossos dados como DataFrames diretamente do nosso ambiente Databricks.
 
 df_crabpotandothercatchables_bronze = spark.read.table("stardew_project.bronze.crabpotandothercatchables")
@@ -33,22 +34,27 @@ df_behavior_bronze = spark.read.table("stardew_project.bronze.behavior")
 
 # COMMAND ----------
 
+# DBTITLE 1,df_crabpotandothercatchables_bronze
 df_crabpotandothercatchables_bronze.limit(5).display()
 
 # COMMAND ----------
 
+# DBTITLE 1,df_fish_detail_bronze
 df_fish_detail_bronze.limit(5).display()
 
 # COMMAND ----------
 
+# DBTITLE 1,df_fish_price_breakdown_bronze
 df_fish_price_breakdown_bronze.limit(5).display()
 
 # COMMAND ----------
 
+# DBTITLE 1,df_legendary_fish_detail_bronze
 df_legendary_fish_detail_bronze.limit(5).display()
 
 # COMMAND ----------
 
+# DBTITLE 1,df_legendary_fish_price_breakdown_bronze
 df_legendary_fish_price_breakdown_bronze.limit(5).display()
 
 # COMMAND ----------
