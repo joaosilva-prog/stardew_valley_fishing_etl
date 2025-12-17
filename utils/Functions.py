@@ -38,11 +38,11 @@ def rename_cols(df):
 # DBTITLE 1,split_col
 # Função split_col, que extrai a primeira ou segunda posição de uma coluna e a retorna como ela mesma.
 
-def split_col(df, column: str, position: int, sep: str, cast: str, alias: str | None = None):
-    if alias is None:
-        df = df.withColumn(column, split(col(column), sep)[position].cast(cast))
-    else:
+def split_col(df, columnsAndAliases: dict, position: int, sep: str, cast: str):
+
+    for column, alias in columnsAndAliases.items():
         df = df.withColumn(alias, split(col(column), sep)[position].cast(cast))
+
     return df
 
 # COMMAND ----------
@@ -112,7 +112,7 @@ def normalize_prices(df, cols_to_skip: list):
       if column in cols_to_skip:
         continue
       else:
-        df = df.withColumn(column, f.regexp_replace(col(column), r"(?<=\d),(?=\d)|(?<=\d)g(?=[,\s]|$)", ""))
+        df = df.withColumn(column, f.regexp_replace(col(column), r"(?<=\d),(?=\d)|(?<=\d)g(?=[,\s]|$)|(?<=,)\s+", ""))
 
     all_cols = df.columns
 

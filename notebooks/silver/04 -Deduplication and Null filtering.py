@@ -45,6 +45,8 @@ df_behavior_silver = spark.read.table("stardew_project.silver.behavior")
 # COMMAND ----------
 
 # DBTITLE 1,df_crabpotandothercatchables_silver
+# Tratamento de nulos e deduplicação dos dados.
+
 df_crabpotandothercatchables_silver = clean_nulls(df_crabpotandothercatchables_silver)
 df_crabpotandothercatchables_silver = df_crabpotandothercatchables_silver.withColumn("used_in", f.regexp_replace(col("used_in"), '"', ""))
 df_crabpotandothercatchables_silver = df_crabpotandothercatchables_silver.dropDuplicates(["name"])
@@ -62,8 +64,11 @@ df_crabpotandothercatchables_silver.agg(*
 # COMMAND ----------
 
 # DBTITLE 1,df_fish_detail_silver
+# Tratamento de nulos e deduplicação dos dados.
+
 df_fish_detail_silver = clean_nulls(df_fish_detail_silver)
-df_fish_detail_silver = df_fish_detail_silver.withColumn("used_in", f.regexp_replace(col("used_in"), '"', ""))
+df_fish_detail_silver = df_fish_detail_silver.withColumn("used_in", f.regexp_replace(col("used_in"), '"', "")) \
+    .withColumn("description", f.regexp_replace(col("description"), '"', ""))
 df_fish_detail_silver = df_fish_detail_silver.dropDuplicates(["name"])
 
 df_fish_detail_silver.agg(*
@@ -79,6 +84,8 @@ df_fish_detail_silver.agg(*
 # COMMAND ----------
 
 # DBTITLE 1,df_fish_price_breakdown_silver
+# Tratamento de nulos e deduplicação dos dados.
+
 df_fish_price_breakdown_silver = clean_nulls(df_fish_price_breakdown_silver)
 df_fish_price_breakdown_silver = df_fish_price_breakdown_silver.dropDuplicates(["name"])
 
@@ -95,6 +102,8 @@ df_fish_price_breakdown_silver.agg(*
 # COMMAND ----------
 
 # DBTITLE 1,df_legendary_fish_detail_silver
+# Tratamento de nulos e deduplicação dos dados.
+
 df_legendary_fish_detail_silver = clean_nulls(df_legendary_fish_detail_silver)
 df_legendary_fish_detail_silver = df_legendary_fish_detail_silver.dropDuplicates(["name"])
 
@@ -111,6 +120,8 @@ df_legendary_fish_detail_silver.agg(*
 # COMMAND ----------
 
 # DBTITLE 1,df_legendary_fish_price_breakdown_silver
+# Tratamento de nulos e deduplicação dos dados.
+
 df_legendary_fish_price_breakdown_silver = clean_nulls(df_legendary_fish_price_breakdown_silver)
 df_legendary_fish_price_breakdown_silver = df_legendary_fish_price_breakdown_silver.dropDuplicates(["name"])
 
@@ -127,6 +138,8 @@ df_legendary_fish_price_breakdown_silver.agg(*
 # COMMAND ----------
 
 # DBTITLE 1,df_legendary_fishII_detail_silver
+# Tratamento de nulos e deduplicação dos dados.
+
 df_legendary_fishII_detail_silver = clean_nulls(df_legendary_fishII_detail_silver)
 df_legendary_fishII_detail_silver = df_legendary_fishII_detail_silver.dropDuplicates(["name"])
 
@@ -143,6 +156,8 @@ df_legendary_fishII_detail_silver.agg(*
 # COMMAND ----------
 
 # DBTITLE 1,df_nightmarketfish_silver
+# Tratamento de nulos e deduplicação dos dados.
+
 df_nightmarketfish_silver = clean_nulls(df_nightmarketfish_silver)
 df_nightmarketfish_silver = df_nightmarketfish_silver.dropDuplicates(["name"])
 
@@ -159,6 +174,8 @@ df_nightmarketfish_silver.agg(*
 # COMMAND ----------
 
 # DBTITLE 1,df_villagers_silver
+# Tratamento de nulos e deduplicação dos dados.
+
 df_villagers_silver = clean_nulls(df_villagers_silver)
 df_villagers_silver = df_villagers_silver.dropDuplicates(["name"])
 
@@ -175,6 +192,8 @@ df_villagers_silver.agg(*
 # COMMAND ----------
 
 # DBTITLE 1,df_behavior_silver
+# Tratamento de nulos e deduplicação dos dados.
+
 df_behavior_silver = clean_nulls(df_behavior_silver)
 df_behavior_silver = df_behavior_silver.dropDuplicates(["behavior"])
 

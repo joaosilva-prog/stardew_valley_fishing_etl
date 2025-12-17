@@ -50,19 +50,19 @@ df_behavior_silver = spark.read.table("stardew_project.bronze.behavior")
 df_crabpotandothercatchables_silver = rename_cols(df_crabpotandothercatchables_silver)
 crab_origin_cols = df_crabpotandothercatchables_silver.columns
 
-df_crabpotandothercatchables_silver.limit(5).display()
-
 # COMMAND ----------
 
 # DBTITLE 1,df_crabpotandothercatchables_silver
 # Padronização de tipos e desempacotamento (adição) de colunas.
 
-df_crabpotandothercatchables_silver = split_col(df_crabpotandothercatchables_silver, "trap_chance_non_mariner", 0, "%", "integer")
-df_crabpotandothercatchables_silver = split_col(df_crabpotandothercatchables_silver, "trap_chance_mariner", 0, "%", "integer")
+crabpot_split = {
+    "trap_chance_non_mariner": "trap_chance_non_mariner",
+    "trap_chance_mariner": "trap_chance_mariner"
+}
+
+df_crabpotandothercatchables_silver = split_col(df_crabpotandothercatchables_silver, crabpot_split, 0, "%", "integer")
 df_crabpotandothercatchables_silver = min_and_max(df_crabpotandothercatchables_silver, "size_inches", "-", "integer", True)
 df_crabpotandothercatchables_silver = reordering_df(df_crabpotandothercatchables_silver, crab_origin_cols)
-
-df_crabpotandothercatchables_silver.limit(5).display()
 
 # COMMAND ----------
 
@@ -78,20 +78,16 @@ df_fish_detail_silver = rename_cols(df_fish_detail_silver)
 df_fish_detail_silver = normalize_column(df_fish_detail_silver, "time")
 fishdetail_origin_cols = df_fish_detail_silver.columns
 
-df_fish_detail_silver.limit(5).display()
-
 # COMMAND ----------
 
 # DBTITLE 1,df_fish_detail_silver
 # Padronização de tipos e desempacotamento (adição) de colunas.
 
-df_fish_detail_silver = split_col(df_fish_detail_silver, "difficulty_behavior", 0, " ", "integer", "difficulty")
-df_fish_detail_silver = split_col(df_fish_detail_silver, "difficulty_behavior", 1, " ", "string", "behavior").drop("difficulty_behavior")
+df_fish_detail_silver = split_col(df_fish_detail_silver, {"difficulty_behavior": "difficulty"}, 0, " ", "integer")
+df_fish_detail_silver = split_col(df_fish_detail_silver, {"difficulty_behavior": "behavior"}, 1, " ", "string").drop("difficulty_behavior")
 df_fish_detail_silver = min_and_max(df_fish_detail_silver, "size_inches", "-", "integer", True)
 df_fish_detail_silver = split_time(df_fish_detail_silver, "time", "-", True)
 df_fish_detail_silver = reordering_df(df_fish_detail_silver, fishdetail_origin_cols)
-
-df_fish_detail_silver.limit(5).display()
 
 # COMMAND ----------
 
@@ -106,8 +102,6 @@ df_fish_detail_silver.limit(5).display()
 df_fish_price_breakdown_silver = rename_cols(df_fish_price_breakdown_silver)
 fish_price_breakdown_origin_cols = df_fish_price_breakdown_silver.columns
 
-df_fish_price_breakdown_silver.limit(5).display()
-
 # COMMAND ----------
 
 # DBTITLE 1,df_fish_price_breakdown_silver
@@ -115,8 +109,6 @@ df_fish_price_breakdown_silver.limit(5).display()
 
 df_fish_price_breakdown_silver = normalize_prices(df_fish_price_breakdown_silver, ["name", "ingestion_timestamp"])
 df_fish_price_breakdown_silver = reordering_df(df_fish_price_breakdown_silver, fish_price_breakdown_origin_cols)
-
-df_fish_price_breakdown_silver.limit(5).display()
 
 # COMMAND ----------
 
@@ -132,20 +124,16 @@ df_legendary_fish_detail_silver = rename_cols(df_legendary_fish_detail_silver)
 df_legendary_fish_detail_silver = normalize_column(df_legendary_fish_detail_silver, "time")
 legendary_fish_detail_origin_cols = df_legendary_fish_detail_silver.columns
 
-df_legendary_fish_detail_silver.limit(5).display()
-
 # COMMAND ----------
 
 # DBTITLE 1,df_legendary_fish_detail_silver
 # Padronização de tipos e desempacotamento (adição) de colunas.
 
-df_legendary_fish_detail_silver = split_col(df_legendary_fish_detail_silver, "difficulty_behavior", 0, " ", "integer", "difficulty")
-df_legendary_fish_detail_silver = split_col(df_legendary_fish_detail_silver, "difficulty_behavior", 1, " ", "string", "behavior").drop("difficulty_behavior")
+df_legendary_fish_detail_silver = split_col(df_legendary_fish_detail_silver, {"difficulty_behavior": "difficulty"}, 0, " ", "integer")
+df_legendary_fish_detail_silver = split_col(df_legendary_fish_detail_silver, {"difficulty_behavior": "behavior"}, 1, " ", "string").drop("difficulty_behavior")
 df_legendary_fish_detail_silver = min_and_max(df_legendary_fish_detail_silver, "size_inches", "-", "integer", True)
 df_legendary_fish_detail_silver = split_time(df_legendary_fish_detail_silver, "time", "-", True)
 df_legendary_fish_detail_silver = reordering_df(df_legendary_fish_detail_silver, legendary_fish_detail_origin_cols)
-
-df_legendary_fish_detail_silver.limit(5).display()
 
 # COMMAND ----------
 
@@ -160,8 +148,6 @@ df_legendary_fish_detail_silver.limit(5).display()
 df_legendary_fish_price_breakdown_silver = rename_cols(df_legendary_fish_price_breakdown_silver)
 df_legendary_fish_price_breakdown_origin_cols = df_legendary_fish_price_breakdown_silver.columns
 
-df_legendary_fish_price_breakdown_silver.limit(5).display()
-
 # COMMAND ----------
 
 # DBTITLE 1,df_legendary_fish_price_breakdown_silver
@@ -169,8 +155,6 @@ df_legendary_fish_price_breakdown_silver.limit(5).display()
 
 df_legendary_fish_price_breakdown_silver = normalize_prices(df_legendary_fish_price_breakdown_silver, ["name", "ingestion_timestamp"])
 df_legendary_fish_price_breakdown_silver = reordering_df(df_legendary_fish_price_breakdown_silver, df_legendary_fish_price_breakdown_origin_cols)
-
-df_legendary_fish_price_breakdown_silver.limit(5).display()
 
 # COMMAND ----------
 
@@ -186,21 +170,17 @@ df_legendary_fishII_detail_silver = rename_cols(df_legendaryfishII_silver)
 df_legendary_fishII_detail_silver = normalize_column(df_legendary_fishII_detail_silver, "time")
 df_legendary_fishII_detail_origin_cols = df_legendary_fishII_detail_silver.columns
 
-df_legendary_fishII_detail_silver.limit(5).display()
-
 # COMMAND ----------
 
 # DBTITLE 1,df_legendaryfishII_silver
 # Padronização de tipos e desempacotamento (adição) de colunas.
 
-df_legendary_fishII_detail_silver = split_col(df_legendary_fishII_detail_silver, "difficulty_behavior", 0, " ", "integer", "difficulty")
-df_legendary_fishII_detail_silver = split_col(df_legendary_fishII_detail_silver, "difficulty_behavior", 1, " ", "string", "behavior").drop("difficulty_behavior")
+df_legendary_fishII_detail_silver = split_col(df_legendary_fishII_detail_silver, {"difficulty_behavior": "difficulty"}, 0, " ", "integer")
+df_legendary_fishII_detail_silver = split_col(df_legendary_fishII_detail_silver, {"difficulty_behavior": "behavior"}, 1, " ", "string").drop("difficulty_behavior")
 df_legendary_fishII_detail_silver = min_and_max(df_legendary_fishII_detail_silver, "size_inches", "-", "integer", True)
 df_legendary_fishII_detail_silver = split_time(df_legendary_fishII_detail_silver, "time", "-", True)
 df_legendary_fishII_detail_silver = normalize_prices(df_legendary_fishII_detail_silver, ["name", "description", "location", "time_min", "time_max", "season", "weather", "size_inches_min", "size_inches_max", "difficulty", "behavior", "base_xp", "ingestion_timestamp"])
 df_legendary_fishII_detail_silver = reordering_df(df_legendary_fishII_detail_silver, df_legendary_fishII_detail_origin_cols)
-
-df_legendary_fishII_detail_silver.limit(5).display()
 
 # COMMAND ----------
 
@@ -215,20 +195,16 @@ df_legendary_fishII_detail_silver.limit(5).display()
 df_nightmarketfish_silver = rename_cols(df_nightmarketfish_silver)
 df_nightmarketfish_origin_cols = df_nightmarketfish_silver.columns
 
-df_nightmarketfish_silver.limit(5).display()
-
 # COMMAND ----------
 
 # DBTITLE 1,df_nightmarketfish_silver
 # Padronização de tipos e desempacotamento (adição) de colunas.
 
-df_nightmarketfish_silver = split_col(df_nightmarketfish_silver, "difficulty_behavior", 0, " ", "integer", "difficulty")
-df_nightmarketfish_silver = split_col(df_nightmarketfish_silver, "difficulty_behavior", 1, " ", "string", "behavior").drop("difficulty_behavior")
+df_nightmarketfish_silver = split_col(df_nightmarketfish_silver, {"difficulty_behavior": "difficulty"}, 0, " ", "integer")
+df_nightmarketfish_silver = split_col(df_nightmarketfish_silver, {"difficulty_behavior": "behavior"}, 1, " ", "string").drop("difficulty_behavior")
 df_nightmarketfish_silver = min_and_max(df_nightmarketfish_silver, "size", "-", "integer", True)
 df_nightmarketfish_silver = normalize_prices(df_nightmarketfish_silver, ["name", "description", "location", "size_min", "size_max", "difficulty", "behavior", "base_xp", "used_in", "ingestion_timestamp"])
 df_nightmarketfish_silver = reordering_df(df_nightmarketfish_silver, df_nightmarketfish_origin_cols)
-
-df_nightmarketfish_silver.limit(5).display()
 
 # COMMAND ----------
 
@@ -242,8 +218,6 @@ df_nightmarketfish_silver.limit(5).display()
 
 df_behavior_silver = rename_cols(df_behavior_silver)
 
-df_behavior_silver.limit(5).display()
-
 # COMMAND ----------
 
 # MAGIC %md
@@ -255,8 +229,6 @@ df_behavior_silver.limit(5).display()
 # Padronização dos nomes das colunas para lower_snake_case.
 
 df_villagers_silver = rename_cols(df_villagers_silver)
-
-df_villagers_silver.limit(5).display()
 
 # COMMAND ----------
 
