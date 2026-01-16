@@ -7,10 +7,8 @@
 
 # DBTITLE 1,Spark Imports
 import pyspark.sql.functions as f
-from pyspark.sql.types import StringType, IntegerType, FloatType
-from pyspark.sql.functions import col, split
-from pyspark.sql.functions import current_timestamp
-from pyspark.sql.functions import instr
+from pyspark.sql.types import StructType, StructField, StringType, IntegerType, FloatType, BooleanType
+from pyspark.sql.functions import col, split, current_timestamp, instr, array, lit, array_remove, isnull, isnotnull, array_compact
 
 # COMMAND ----------
 
@@ -20,6 +18,7 @@ from pyspark.sql.functions import instr
 import re
 
 def rename_cols(df):
+  
   origin_names = list(df.columns)
 
   names_to_replace = {}
@@ -31,7 +30,7 @@ def rename_cols(df):
     names_to_replace[key] = re.sub(r"^_+|_+$", "", value)
   
   df = df.withColumnsRenamed(names_to_replace)
-  return df.withColumn("ingestion_timestamp", current_timestamp())
+  return df
 
 # COMMAND ----------
 
@@ -51,6 +50,7 @@ def split_col(df, columnsAndAliases: dict, position: int, sep: str, cast: str):
 # Função normalize_column, que normaliza unicodes dos valores das linhas da coluna passada como argumento para "-".
 
 def normalize_column(df, column: str):
+    
     if df.schema[column].dataType == StringType():
         df = df.withColumn(column, f.regexp_replace(col(column), r"\p{Pd}", "-"))
         df = df.withColumn(column, f.regexp_replace(col(column), r"\s*-\s*", "-"))
@@ -65,6 +65,7 @@ def normalize_column(df, column: str):
 # Função min_and_max, que extrai valores mínimos e máximos das colunas e as transforma em colunas distintas.
 
 def min_and_max(df, column: str, sep: str, cast: str, drop: bool):
+    
     col_min = column + "_min"
     col_max = column + "_max"
 
@@ -85,6 +86,7 @@ def min_and_max(df, column: str, sep: str, cast: str, drop: bool):
 # Função split_time, que extrai valores mínimos e máximos da coluna time e as transforma em colunas distintas, mantendo como string.
 
 def split_time(df, column: str, sep: str, drop: bool):
+    
     col_min = column + "_min"
     col_max = column + "_max"
 
@@ -104,12 +106,13 @@ def split_time(df, column: str, sep: str, drop: bool):
 # DBTITLE 1,normalize_prices
 # Função normalize_prices, que serve para normalizar as colunas de preço dos DataFrames e fazer o casting corretamente de cada um dos casos.
 
-def normalize_prices(df, cols_to_skip: list):
+def normalize_prices(df, colsToSkip: list):
+  
     all_cols = df.columns
-    cols_to_str = ["price", "fish_profession_25", "fish_profession_50", "fisher_profession_25", "angler_profession_50"]
+    cols_to_str = ["price", "fish_profession_25", "fish_profession_50", "fisher_profession_25", "angler_profession_50", "name"]
 
     for column in all_cols:
-      if column in cols_to_skip:
+      if column in colsToSkip:
         continue
       else:
         df = df.withColumn(column, f.regexp_replace(col(column), r"(?<=\d),(?=\d)|(?<=\d)g(?=[,\s]|$)|(?<=,)\s+", ""))
@@ -117,7 +120,7 @@ def normalize_prices(df, cols_to_skip: list):
     all_cols = df.columns
 
     for column in all_cols:
-      if column in cols_to_skip:
+      if column in colsToSkip:
         continue
       elif column in cols_to_str:
         df = df.withColumn(column, col(column).cast("string"))
@@ -131,7 +134,8 @@ def normalize_prices(df, cols_to_skip: list):
 # DBTITLE 1,reordering_df
 # Função reordering_df, que serve para reordenarmos as colunas dos DataFrames de volta para suas colocações originais (retirando as adições de colunas do final).
 
-def reordering_df(df, old_columns):
+def reordering_df(df, oldColumns: list):
+    
     new_columns = df.columns
     final_order = []
 
@@ -141,7 +145,7 @@ def reordering_df(df, old_columns):
         "time": ["time_min", "time_max"]
     }
 
-    for old_col in old_columns:
+    for old_col in oldColumns:
         if old_col in new_columns:
             final_order.append(old_col)
         elif old_col in replaces.keys():
@@ -154,6 +158,35 @@ def reordering_df(df, old_columns):
             pass
 
     df = df.select(final_order)
+    return df
+
+# COMMAND ----------
+
+# Função auxiliar split_location, que serve para splitarmos a coluna location dos DataFrames e as transformar em colunas separadas contendo suas informações.
+
+def split_location(df, colName: str, colToExtract: str, listToExtract: list, selectOrder: list, fillNa=None):
+
+    if fillNa:
+        df = df.withColumn(f"{colName.lower()}_array_withnulls", array(*[f.when(col(colToExtract.lower()).contains(obj), lit(obj)) for obj in listToExtract]))
+        df = df.withColumn(f"{colName.lower()}_array", array_compact(col(f"{colName.lower()}_array_withnulls")))
+        df = df.withColumn(f"{colName.lower()}", f.explode_outer(f"{colName.lower()}_array")).fillna(fillNa).select(*selectOrder)
+    else:
+        df = df.withColumn(f"{colName.lower()}_array_withnulls", array(*[f.when(col(colToExtract.lower()).contains(obj), lit(obj)) for obj in listToExtract]))
+        df = df.withColumn(f"{colName.lower()}_array", array_compact(col(f"{colName.lower()}_array_withnulls")))
+        df = df.withColumn(f"{colName.lower()}", f.explode_outer(f"{colName.lower()}_array")).select(*selectOrder)
+
+    return df
+
+# COMMAND ----------
+
+# Função auxiliar replace_col_values, que serve para renomearmos os valores das linhas de uma coluna por outros.
+
+def replace_col_values(df, colToNormalize: str, newValues: dict):
+
+    df = df.withColumn(colToNormalize, array(*[f.when(col(colToNormalize) == old, lit(new)) for (old, new) in newValues.items()]))
+    df = df.withColumn(colToNormalize, array_compact(colToNormalize))
+    df = df.withColumn(colToNormalize, f.explode(colToNormalize))
+
     return df
 
 # COMMAND ----------
@@ -211,6 +244,7 @@ def clean_nulls(df):
 # Função save_df, que serve para salvar os DataFrames finais como tabelas Delta fazendo schema enforcement e com schema evolution ativado para toda a sessão.
 
 def save_df(df, schema: str, table: str, key: str):
+    
     view_name = (table + "df")
     df.createOrReplaceTempView(view_name)
 

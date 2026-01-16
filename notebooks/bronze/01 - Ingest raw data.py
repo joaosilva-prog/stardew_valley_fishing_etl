@@ -28,47 +28,6 @@ behavior = "/Volumes/stardew_project/raw/raw_csvs/behavior.csv"
 
 # COMMAND ----------
 
-# DBTITLE 1,Importação dos Dados
-# Leitura dos arquivos CSV raw em Spark Dataframes.
-
-df_crabpotandothercatchables_raw = spark.read.option("header", "true") \
-  .option("inferSchema", "true") \
-    .csv(crabpotandothercatchables)
-
-df_fish_detail_raw = spark.read.option("header", "true") \
-  .option("inferSchema", "true") \
-    .csv(fish_detail)
-
-df_fish_price_breakdown_raw = spark.read.option("header", "true") \
-  .option("inferSchema", "true") \
-    .csv(fish_price_breakdown)
-
-df_legendary_fish_detail_raw = spark.read.option("header", "true") \
-  .option("inferSchema", "true") \
-    .csv(legendary_fish_detail)
-
-df_legendary_fish_price_breakdown_raw = spark.read.option("header", "true") \
-  .option("inferSchema", "true") \
-    .csv(legendary_fish_price_breakdown)
-
-df_legendaryfishII_raw = spark.read.option("header", "true") \
-  .option("inferSchema", "true") \
-    .csv(legendaryfishII)
-
-df_nightmarketfish_raw = spark.read.option("header", "true") \
-  .option("inferSchema", "true") \
-    .csv(nightmarketfish)
-
-df_villagers_raw = spark.read.option("header", "true") \
-  .option("inferSchema", "true") \
-    .csv(villagers)
-
-df_behavior_raw = spark.read.option("header", "true") \
-  .option("inferSchema", "true") \
-    .csv(behavior)
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC # Funções auxiliares
 # MAGIC Import das funções auxiliares que irão realizar o processo de salvamento na camada Bronze dos DataFrames.
@@ -77,6 +36,56 @@ df_behavior_raw = spark.read.option("header", "true") \
 
 # DBTITLE 1,Importação das Funções Auxiliares
 # MAGIC %run /Workspace/Users/sjoao5498@gmail.com/stardew_valley_fishing_etl/utils/Functions
+
+# COMMAND ----------
+
+# DBTITLE 1,Importação dos Dados
+# Leitura dos arquivos CSV raw em Spark Dataframes.
+
+df_crabpotandothercatchables_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(crabpotandothercatchables) \
+      .withColumn("ingestion_timestamp", current_timestamp())
+
+df_fish_detail_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(fish_detail) \
+      .withColumn("ingestion_timestamp", current_timestamp())
+
+df_fish_price_breakdown_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(fish_price_breakdown) \
+      .withColumn("ingestion_timestamp", current_timestamp())
+
+df_legendary_fish_detail_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(legendary_fish_detail) \
+      .withColumn("ingestion_timestamp", current_timestamp())
+
+df_legendary_fish_price_breakdown_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(legendary_fish_price_breakdown) \
+      .withColumn("ingestion_timestamp", current_timestamp())
+
+df_legendaryfishII_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(legendaryfishII) \
+      .withColumn("ingestion_timestamp", current_timestamp())
+
+df_nightmarketfish_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(nightmarketfish) \
+      .withColumn("ingestion_timestamp", current_timestamp())
+
+df_villagers_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(villagers) \
+      .withColumn("ingestion_timestamp", current_timestamp())
+
+df_behavior_raw = spark.read.option("header", "true") \
+  .option("inferSchema", "true") \
+    .csv(behavior) \
+      .withColumn("ingestion_timestamp", current_timestamp())
 
 # COMMAND ----------
 
