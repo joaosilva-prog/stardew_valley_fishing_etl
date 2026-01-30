@@ -44,48 +44,57 @@ behavior = "/Volumes/stardew_project/raw/raw_csvs/behavior.csv"
 
 df_crabpotandothercatchables_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
-    .csv(crabpotandothercatchables) \
-      .withColumn("ingestion_timestamp", current_timestamp())
+    .csv(crabpotandothercatchables)
+
+df_crabpotandothercatchables_raw = df_crabpotandothercatchables_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 df_fish_detail_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
     .csv(fish_detail) \
-      .withColumn("ingestion_timestamp", current_timestamp())
+
+df_fish_detail_raw = df_fish_detail_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 df_fish_price_breakdown_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
-    .csv(fish_price_breakdown) \
-      .withColumn("ingestion_timestamp", current_timestamp())
+    .csv(fish_price_breakdown)
+
+df_fish_price_breakdown_raw = df_fish_price_breakdown_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 df_legendary_fish_detail_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
-    .csv(legendary_fish_detail) \
-      .withColumn("ingestion_timestamp", current_timestamp())
+    .csv(legendary_fish_detail)
+
+df_legendary_fish_detail_raw = df_legendary_fish_detail_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 df_legendary_fish_price_breakdown_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
-    .csv(legendary_fish_price_breakdown) \
-      .withColumn("ingestion_timestamp", current_timestamp())
+    .csv(legendary_fish_price_breakdown)
+
+df_legendary_fish_price_breakdown_raw = df_legendary_fish_price_breakdown_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 df_legendaryfishII_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
-    .csv(legendaryfishII) \
-      .withColumn("ingestion_timestamp", current_timestamp())
+    .csv(legendaryfishII)
+
+df_legendaryfishII_raw = df_legendaryfishII_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 df_nightmarketfish_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
-    .csv(nightmarketfish) \
-      .withColumn("ingestion_timestamp", current_timestamp())
+    .csv(nightmarketfish)
+
+df_nightmarketfish_raw = df_nightmarketfish_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 df_villagers_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
-    .csv(villagers) \
-      .withColumn("ingestion_timestamp", current_timestamp())
+    .csv(villagers)
+
+df_villagers_raw = df_villagers_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 df_behavior_raw = spark.read.option("header", "true") \
   .option("inferSchema", "true") \
-    .csv(behavior) \
-      .withColumn("ingestion_timestamp", current_timestamp())
+    .csv(behavior)
+
+df_behavior_raw = df_behavior_raw.withColumn("ingestion_timestamp", current_timestamp())
 
 # COMMAND ----------
 

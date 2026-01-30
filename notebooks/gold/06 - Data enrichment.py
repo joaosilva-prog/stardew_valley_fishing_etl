@@ -36,6 +36,7 @@ df_behavior_gold = spark.read.table("stardew_project.silver.behavior_v2")
 
 # COMMAND ----------
 
+# DBTITLE 1,Import das Funções Auxiliares
 # MAGIC %run /Workspace/Users/sjoao5498@gmail.com/stardew_valley_fishing_etl/utils/Functions
 
 # COMMAND ----------
@@ -163,7 +164,7 @@ df_legendary_fish_detail_final_gold = df_legendary_fish_detail_join.select("name
 # DBTITLE 1,is_best_early_game_fish
 df_nightmarketfish_join = df_nightmarketfish_join.withColumn("is_best_early_game_fish", f.when((col("is_beginner_friendly") == True) & ((col("effort") == "Baixo") | (col("effort") == "Médio")) & (col("difficulty").between(0, 50)), True).otherwise(False))
 
-df_nightmarketfish_gold = df_nightmarketfish_join.select("name", "is_beginner_friendly").join(df_nightmarketfish_gold, "name", "right_outer").distinct()
+df_nightmarketfish_gold = df_nightmarketfish_join.select("name", "is_best_early_game_fish").join(df_nightmarketfish_gold, "name", "right_outer").distinct()
 
 # COMMAND ----------
 
@@ -282,7 +283,7 @@ except Exception as e:
 
 # DBTITLE 1,fish_price_breakdown
 try:
-    save_df(df_fish_price_breakdown_gold, "gold", "fish_price_breakdown", "name")
+    save_df(df_fish_price_breakdown_gold, "gold", "fish_price_breakdown", "fish")
 except Exception as e:
     print("Erro ao salvar a tabela fish_price_breakdown: ", e)
     raise
@@ -291,7 +292,7 @@ except Exception as e:
 
 # DBTITLE 1,legendary_fish_price_breakdown
 try:
-    save_df(df_legendary_fish_price_breakdown_gold, "gold", "legendary_fish_price_breakdown", "name")
+    save_df(df_legendary_fish_price_breakdown_gold, "gold", "legendary_fish_price_breakdown", "fish")
 except Exception as e:
     print("Erro ao salvar a tabela legendary_fish_price_breakdown: ", e)
     raise
@@ -300,7 +301,7 @@ except Exception as e:
 
 # DBTITLE 1,nightmarketfish_price_breakdown
 try:
-    save_df(df_nightmarketfish_price_breakdown_gold, "gold", "nightmarketfish_price_breakdown", "name")
+    save_df(df_nightmarketfish_price_breakdown_gold, "gold", "nightmarketfish_price_breakdown", "fish")
 except Exception as e:
     print("Erro ao salvar a tabela nightmarketfish_price_breakdown: ", e)
     raise
@@ -309,7 +310,7 @@ except Exception as e:
 
 # DBTITLE 1,behavior
 try:
-    save_df(df_behavior_gold, "gold", "behavior", "name")
+    save_df(df_behavior_gold, "gold", "behavior", "behavior")
 except Exception as e:
     print("Erro ao salvar a tabela behavior: ", e)
     raise
