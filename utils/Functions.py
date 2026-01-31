@@ -197,7 +197,7 @@ def replace_col_values(df, colToNormalize: str, newValues: dict):
 null_map = {
     "used_in": "No uses",
     "location": "Unknown",
-    "weather": "Any",
+    "weather": "Anytime",
     "season": "Unknown",
     "size_inches_min": 9999,
     "size_inches_max": 9999,
@@ -244,6 +244,8 @@ def clean_nulls(df):
 # Função save_df, que serve para salvar os DataFrames finais como tabelas Delta fazendo schema enforcement e com schema evolution ativado para toda a sessão.
 
 def save_df(df, schema: str, table: str, key: str):
+
+    full_table_name = f"stardew_project.{schema}.{table}"
     
     view_name = (table + "df")
     df.createOrReplaceTempView(view_name)
@@ -272,14 +274,10 @@ def save_df(df, schema: str, table: str, key: str):
         """)
     else:
         print(f"tabela {table} não existe")
-        spark.sql(f"""
-                  CREATE TABLE stardew_project.{schema}.{table}
-                  {final_schema}
-                  USING DELTA 
-                  """)
-        spark.sql(f"""
-                  INSERT INTO stardew_project.{schema}.{table}
-                  SELECT * FROM {view_name}
-                  """)
+        (df.write
+           .format("delta")
+           .option("delta.columnMapping.mode", "name")
+           .mode("overwrite")
+           .saveAsTable(full_table_name))
         
     spark.sql(f"DROP VIEW {view_name}")

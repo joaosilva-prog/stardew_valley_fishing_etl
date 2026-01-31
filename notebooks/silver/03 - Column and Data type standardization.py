@@ -88,6 +88,12 @@ df_fish_detail_silver = split_col(df_fish_detail_silver, {"difficulty_behavior":
 df_fish_detail_silver = min_and_max(df_fish_detail_silver, "size_inches", "-", "integer", True)
 df_fish_detail_silver = split_time(df_fish_detail_silver, "time", "-", True)
 df_fish_detail_silver = reordering_df(df_fish_detail_silver, fishdetail_origin_cols)
+df_fish_detail_silver = df_fish_detail_silver.withColumn("time_min", 
+    f.when(f.col("time_min") == "Any", "Anytime").otherwise(f.col("time_min"))
+)
+df_fish_detail_silver = df_fish_detail_silver.withColumn("time_max", 
+    f.when(f.col("time_max") == "Any", "Anytime").otherwise(f.col("time_max"))
+)
 
 # COMMAND ----------
 
@@ -134,6 +140,12 @@ df_legendary_fish_detail_silver = split_col(df_legendary_fish_detail_silver, {"d
 df_legendary_fish_detail_silver = min_and_max(df_legendary_fish_detail_silver, "size_inches", "-", "integer", True)
 df_legendary_fish_detail_silver = split_time(df_legendary_fish_detail_silver, "time", "-", True)
 df_legendary_fish_detail_silver = reordering_df(df_legendary_fish_detail_silver, legendary_fish_detail_origin_cols)
+df_legendary_fish_detail_silver = df_legendary_fish_detail_silver.withColumn("time_min", 
+    f.when(f.col("time_min") == "Any", "Anytime").otherwise(f.col("time_min"))
+)
+df_legendary_fish_detail_silver = df_legendary_fish_detail_silver.withColumn("time_max", 
+    f.when(f.col("time_max") == "Any", "Anytime").otherwise(f.col("time_max"))
+)
 
 # COMMAND ----------
 
@@ -181,6 +193,12 @@ df_legendary_fishII_detail_silver = min_and_max(df_legendary_fishII_detail_silve
 df_legendary_fishII_detail_silver = split_time(df_legendary_fishII_detail_silver, "time", "-", True)
 df_legendary_fishII_detail_silver = normalize_prices(df_legendary_fishII_detail_silver, ["name", "description", "location", "time_min", "time_max", "season", "weather", "size_inches_min", "size_inches_max", "difficulty", "behavior", "base_xp", "ingestion_timestamp"])
 df_legendary_fishII_detail_silver = reordering_df(df_legendary_fishII_detail_silver, df_legendary_fishII_detail_origin_cols)
+df_legendary_fishII_detail_silver = df_legendary_fishII_detail_silver.withColumn("time_min", 
+    f.when(f.col("time_min") == "Any", "Anytime").otherwise(f.col("time_min"))
+)
+df_legendary_fishII_detail_silver = df_legendary_fishII_detail_silver.withColumn("time_max", 
+    f.when(f.col("time_max") == "Any", "Anytime").otherwise(f.col("time_max"))
+)
 
 # COMMAND ----------
 

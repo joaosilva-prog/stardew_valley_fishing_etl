@@ -1,0 +1,6 @@
+Behavior,Description
+Mixed,These fish use the basic movement pattern.
+Smooth,These fish have a more steady movement pattern.
+Sinker,These fish have a faster downwards acceleration.
+Floater,These fish have a faster upwards acceleration.
+Dart,"These fish move more randomly with a [2 x difficulty]% higher possible amplitude in both directions, moving erratically up and down the fishing bar."

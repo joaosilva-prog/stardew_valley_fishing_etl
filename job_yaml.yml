@@ -1,0 +1,57 @@
+resources:
+  jobs:
+    ETL_Stardew_Valley:
+      name: ETL_Stardew_Valley
+      tasks:
+        - task_key: 01_Ingest_Raw_Data
+          notebook_task:
+            notebook_path: /Workspace/Users/sjoao5498@gmail.com/stardew_valley_fishing_etl/notebooks/bronze/01
+              - Ingest raw data
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: 02_Exploratory_Data_Analysis
+          depends_on:
+            - task_key: 01_Ingest_Raw_Data
+          notebook_task:
+            notebook_path: /Workspace/Users/sjoao5498@gmail.com/stardew_valley_fishing_etl/notebooks/bronze/02
+              - Exploratory data analysis (EDA)
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: 03_Column_and_Data_Type_Standardization
+          depends_on:
+            - task_key: 02_Exploratory_Data_Analysis
+          notebook_task:
+            notebook_path: /Workspace/Users/sjoao5498@gmail.com/stardew_valley_fishing_etl/notebooks/silver/03
+              - Column and Data type standardization
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: 04_Deduplication_and_Null_filtering
+          depends_on:
+            - task_key: 03_Column_and_Data_Type_Standardization
+          notebook_task:
+            notebook_path: /Workspace/Users/sjoao5498@gmail.com/stardew_valley_fishing_etl/notebooks/silver/04
+              -Deduplication and Null filtering
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: 05_Split_and_Replace_Data
+          depends_on:
+            - task_key: 04_Deduplication_and_Null_filtering
+          notebook_task:
+            notebook_path: /Workspace/Users/sjoao5498@gmail.com/stardew_valley_fishing_etl/notebooks/silver/05
+              - Split and Replace Data
+            source: WORKSPACE
+          environment_key: Default
+        - task_key: 06_Data_Enrichment
+          depends_on:
+            - task_key: 05_Split_and_Replace_Data
+          notebook_task:
+            notebook_path: /Workspace/Users/sjoao5498@gmail.com/stardew_valley_fishing_etl/notebooks/gold/06
+              - Data enrichment
+            source: WORKSPACE
+      queue:
+        enabled: true
+      environments:
+        - environment_key: Default
+          spec:
+            environment_version: "4"
+      performance_target: PERFORMANCE_OPTIMIZED
